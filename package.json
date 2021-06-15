@@ -1,0 +1,21 @@
+{
+  "name": "@big-data-processor/task-adapter-ssh-docker",
+  "version": "0.9.2",
+  "description": "A generic task adapter to execute docker commands on a remote machine via ssh.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Chi Yang",
+  "license": "MIT",
+  "big-data-processor": {
+    "name": "ssh-docker",
+    "type": "adapter",
+    "author": "Chi Yang",
+    "email": "chiyang1118@gmail.com"
+  },
+  "dependencies": {
+    "@big-data-processor/task-adapter-base": "^0.9.6",
+    "ssh2": "^1.1.0"
+  }
+}
