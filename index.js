@@ -16,7 +16,7 @@ class BdpSshDockerAdapter extends BdpTaskAdapter {
     opt.adapterAuthor = "Chi Yang: chiyang1118@gmail.com";
     super(opt);
     this.userInfo = os.userInfo();
-    this.detach = this.options.detach.toString().toLowerCase() === 'true' ? true : false;
+    this.detach = this.options.detach && this.options.detach.toString().toLowerCase() === 'true' ? true : false;
     this.options.stdoeMode = this.detach ? "watch" : "pipe";
     this.dockerPath = this.options.dockerPath || "docker";
     this.proxyHostIP = this.options.proxyHostIP || undefined;
