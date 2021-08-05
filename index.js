@@ -54,17 +54,24 @@ class BdpSshDockerAdapter extends BdpTaskAdapter {
     if (!this.sshClient) {
       this.sshClient = new sshClient();
     }
-    return new Promise((resolve, reject) => {
-      this.sshClient.removeAllListeners('error');
-      this.sshClient.removeAllListeners('ready');
-      this.sshClient.removeAllListeners('end');
-      this.sshClient.on('error', (err) => {
-        console.log(err);
-        reject(err);
-      }).on('ready', () => {
-        resolve(this.sshClient);
-      }).connect(this.sshConfig);
-    });
+    let isConnected = false, connCounter = 0;;
+    while(!isConnected && connCounter < 20) {
+      try {
+        await new Promise((resolve, reject) => {
+          this.sshClient.removeAllListeners('error');
+          this.sshClient.removeAllListeners('ready');
+          this.sshClient.removeAllListeners('end');
+          this.sshClient.on('error', (err) => reject(err)).on('ready', () => resolve()).connect(this.sshConfig);
+        });
+        isConnected = true;
+      } catch(err) {
+        isConnected = false;
+      }
+      connCounter ++;
+      if (connCounter >= 20 && !isConnected) { throw "ssh connection failed." }
+      await sleep(1000);
+    }
+    return this.sshClient;
   }
   async sshExec(theCommand) {
     const returnObj = { stdout: '', stderr: '', exitCode: null, signal: null};
