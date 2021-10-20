@@ -1,6 +1,6 @@
 {
   "name": "@big-data-processor/task-adapter-ssh-docker",
-  "version": "0.9.14",
+  "version": "0.9.15",
   "description": "A generic task adapter to execute docker commands on a remote machine via ssh.",
   "main": "index.js",
   "scripts": {
@@ -15,7 +15,7 @@
     "email": "chiyang1118@gmail.com"
   },
   "dependencies": {
-    "@big-data-processor/task-adapter-base": "^0.9.14",
+    "@big-data-processor/task-adapter-base": "^0.9.15",
     "ssh2": "^1.1.0"
   }
 }
