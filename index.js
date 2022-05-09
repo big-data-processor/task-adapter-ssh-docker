@@ -143,14 +143,18 @@ class BdpSshDockerAdapter extends BdpTaskAdapter {
     let thePort, requestCounter = 0;
     const jobId = jobObj.jobId;
     process.stdout.write(`[task-adapter-ssh-docker] Get the proxy port from docker ...\n`);
-    while (!thePort && requestCounter < 2*3600 ) {
-      await sleep(500);
-      const dockerPortProc = await this.sshExecOnce(`${this.dockerPath} port ${jobId} ${jobObj.proxy.containerPort}`);
-      if (dockerPortProc.exitCode === 0) {
-        try {
+    while (!thePort && requestCounter < 3600 ) {
+      await sleep(1000);
+      const cmd = `${this.dockerPath} port ${jobId} ${jobObj.proxy.containerPort}`;
+      try {
+        const dockerPortProc = await this.sshExecOnce(cmd);
+        if (dockerPortProc.exitCode === 0) {
           thePort = parseInt(dockerPortProc.stdout.trim().split(':')[1]);
           if (Number.isNaN(thePort)) { thePort = null; }
-        } catch(err) {console.log(err); }
+        }
+      } catch(err) {
+        console.log(`[cmd ${requestCounter}]: ${cmd}`)
+        console.log(err);
       }
       requestCounter ++;
     }
