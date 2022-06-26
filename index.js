@@ -203,7 +203,12 @@ class BdpSshDockerAdapter extends BdpTaskAdapter {
         conn.exec(jobObj.command, (err, stream) => {
           if (err) throw err;
           runningJob.isRunning = true;
-          stream.on('close', (code, signal) => this.emitJobStatus(jobId, code, signal).catch(console.log).finally(() => conn.end()));
+          stream.on('close', (code, signal) => {
+            setTimeout(() => {
+              conn.end();
+              this.emitJobStatus(jobId, code, signal).catch(console.log);
+            });
+          });
           runningJob.stdoutStream = stream;
           runningJob.stderrStream = stream.stderr;
         });
@@ -280,6 +285,8 @@ class BdpSshDockerAdapter extends BdpTaskAdapter {
             if (isNaN(exitCode)) { exitCode = 3; }
             await this.emitJobStatus(jobId, exitCode, null);
             break;
+          default:
+            console.log(`Unknown container status: ${jobStatus} (${jobId})`);
         }
       }
       this.sshClient.end();
