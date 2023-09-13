@@ -111,7 +111,7 @@ class BdpSshDockerAdapter extends BdpTaskAdapter {
   }
   async beforeStart() {
     await this.sshConnect();
-    console.log("ssh connected");
+    console.log(`ssh connected on ${this.sshConfig.host}`);
   }
   
   async stopAllJobs() {
@@ -158,15 +158,15 @@ class BdpSshDockerAdapter extends BdpTaskAdapter {
       }
       requestCounter ++;
     }
-    if (!thePort || !jobObj.proxy.ip) {
+    if (!thePort) {
       process.stdout.write(`[task-adapter-ssh-docker] Stop the web proxy for this result.\n`);
       return null;
     }
-    process.stdout.write(`[task-adapter-ssh-docker] The port is ${thePort}\n`);
+    process.stdout.write(`[task-adapter-ssh-docker] The port is ${thePort} on ${jobObj.proxy.ip || this.sshConfig.host}\n`);
     jobObj.proxy = Object.assign({}, jobObj.proxy, {port: thePort})
     return {
       protocol: jobObj.proxy.protocol,
-      ip: jobObj.proxy.ip,
+      ip: jobObj.proxy.ip || this.sshConfig.host,
       port: thePort,
       pathRewrite: jobObj.proxy.pathRewrite,
       entryPath: jobObj.proxy.entryPath,
